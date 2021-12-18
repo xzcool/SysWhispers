@@ -6,6 +6,7 @@ import jmespath
 import functools
 import operator
 import os
+import sys
 from pprint import pprint
 
 
@@ -114,36 +115,45 @@ class SysWhispers(object):
 
         excluded_functions = []
 
-        # Write ASM file.
-        with open(f'{basename}.asm', 'wb') as hnd:
-            hnd.write(b'.code\n\n')
-            for function_name in function_names:
-                try:
-                    hnd.write((self._get_function_asm_code(function_name, versions) + '\n').encode())
-                except ValueError as incompatible_function:
-                    print(f'WARNING: {incompatible_function}')
-                    excluded_functions.append(function_name)
-            hnd.write(b'end')
+        if basename:
+            # Write ASM file.
+            with open(f'{basename}.asm', 'wb') as hnd:
+                hnd.write(b'.code\n\n')
+                for function_name in function_names:
+                    try:
+                        hnd.write((self._get_function_asm_code(function_name, versions) + '\n').encode())
+                    except ValueError as incompatible_function:
+                        print(f'WARNING: {incompatible_function}', file=sys.stderr)
+                        excluded_functions.append(function_name)
+                hnd.write(b'end')
+        else:
+                for i,function_name in enumerate(function_names):
+                    try:
+                        print(self._get_function_asm_code(function_name, versions) + ('\n' * (i != len(function_names) - 1)), end='')
+                    except ValueError as incompatible_function:
+                        print(f'WARNING: {incompatible_function}', file=sys.stderr)
+                        excluded_functions.append(function_name)
 
         function_names = list(set(function_names) - set(excluded_functions))
         if not function_names:
             os.remove(f'{basename}.asm')
-            print('ERROR:   No compatible functions found. Exiting...')
+            print('ERROR:   No compatible functions found. Exiting...', file=sys.stderr)
             return
         elif excluded_functions:
-            print()
+            print(file=sys.stderr)
 
-        # Write header file.
-        with open(f'{basename}.h', 'wb') as hnd:
-            hnd.write(b'#pragma once\n\n#include <Windows.h>\n\n')
-            for typedef in self._get_typedefs(function_names):
-                hnd.write(typedef.encode() + b'\n\n')
-            for function_name in function_names:
-                hnd.write((self._get_function_prototype(function_name) + '\n\n').encode())
+        if basename:
+            # Write header file.
+            with open(f'{basename}.h', 'wb') as hnd:
+                hnd.write(b'#pragma once\n\n#include <Windows.h>\n\n')
+                for typedef in self._get_typedefs(function_names):
+                    hnd.write(typedef.encode() + b'\n\n')
+                for function_name in function_names:
+                    hnd.write((self._get_function_prototype(function_name) + '\n\n').encode())
 
-        print('Complete! Files written to:')
-        print(f'\t{basename}.asm')
-        print(f'\t{basename}.h')
+            print('Complete! Files written to:', file=sys.stderr)
+            print(f'\t{basename}.asm', file=sys.stderr)
+            print(f'\t{basename}.h', file=sys.stderr)
 
     def get_version_compatibility(self, versions: list) -> dict:
         version_compatibility = {}
@@ -341,24 +351,27 @@ if __name__ == '__main__':
         "_/_)__(_/__/_)__/_/_/ / (__/__/_)__/_)__(/__/ (__/_)__\n"
         "      _/_                         /                   \n"
         "     (/                          /   @Jackson_T, 2019 \n\n"
-        "SysWhispers: Why call the kernel when you can whisper?\n"
-    )
+        "SysWhispers: Why call the kernel when you can whisper?\n",
+    file=sys.stderr)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--preset', help='Preset ("all", "common")', required=False)
     parser.add_argument('-f', '--functions', help='Comma-separated functions', required=False)
     parser.add_argument('-v', '--versions', help='Comma-separated versions (XP, Vista, 7, 8, 10)', required=False)
-    parser.add_argument('-o', '--out-file', help='Output basename (w/o extension)', required=True)
+    parser.add_argument('-o', '--out-file', help='Output basename (w/o extension)', required=False)
+    parser.add_argument('-n', '--no-header', help='Generate only function definitions', action='store_true')
     args = parser.parse_args()
+    if not args.no_header and not args.out_file:
+        parser.error('--out-file required if --no-header not specified')
 
     sw = SysWhispers()
 
     if args.preset == 'all':
-        print('All functions selected.\n')
+        print('All functions selected.\n', file=sys.stderr)
         sw.generate(basename=args.out_file)
 
     elif args.preset == 'common':
-        print('Common functions selected.\n')
+        print('Common functions selected.\n', file=sys.stderr)
         sw.generate(
             ['NtCreateProcess',
              'NtCreateThreadEx',
@@ -395,14 +408,14 @@ if __name__ == '__main__':
             basename=args.out_file)
 
     elif args.preset:
-        print('ERROR: Invalid preset provided. Must be "all" or "common".')
+        print('ERROR: Invalid preset provided. Must be "all" or "common".', file=sys.stderr)
 
     elif not args.functions and not args.versions:
-        print('ERROR:   --preset XOR --functions AND/OR --versions switches must be specified.\n')
-        print('EXAMPLE: ./syswhispers.py --preset common --out-file syscalls_common')
+        print('ERROR:   --preset XOR --functions AND/OR --versions switches must be specified.\n', file=sys.stderr)
+        print('EXAMPLE: ./syswhispers.py --preset common --out-file syscalls_common', file=sys.stderr)
         print(
-            'EXAMPLE: ./syswhispers.py --functions NtProtectVirtualMemory,NtWriteVirtualMemory --out-file syscalls_mem')
-        print('EXAMPLE: ./syswhispers.py --versions 7,8,10 --out-file syscalls_78X')
+            'EXAMPLE: ./syswhispers.py --functions NtProtectVirtualMemory,NtWriteVirtualMemory --out-file syscalls_mem', file=sys.stderr)
+        print('EXAMPLE: ./syswhispers.py --versions 7,8,10 --out-file syscalls_78X', file=sys.stderr)
 
     else:
         versions_map = {
