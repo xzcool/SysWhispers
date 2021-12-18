@@ -499,5 +499,20 @@
     "identifiers": ["KCONTINUE_ARGUMENT", "PKCONTINUE_ARGUMENT"],
     "dependencies": ["KCONTINUE_TYPE"],
     "definition": "typedef struct _KCONTINUE_ARGUMENT\n{\n\tKCONTINUE_TYPE ContinueType;\n\tULONG          ContinueFlags;\n\tULONGLONG      Reserved[2];\n} KCONTINUE_ARGUMENT, *PKCONTINUE_ARGUMENT;"
+  },
+  {
+	"identifiers": ["BULK_MEMORY_INFORMATION", "PBULK_MEMORY_INFORMATION"],
+	"dependencies": [],
+	"definition": "typedef struct _BULK_MEMORY_INFORMATION\n{\n\tULONG          QueryFlags;\n\tULONG          NumberOfEntries;\n\tPVOID          MaxUserAddress;\n\tBYTE          Reserved[0x18];\n\tPVOID          LowestAddressFound;\n\tBYTE          Reserved2[0x10];\n\tMEMORY_BASIC_INFORMATION          MemoryInfo[1];\n} BULK_MEMORY_INFORMATION, *PBULK_MEMORY_INFORMATION;"
+  },
+  {
+	"identifiers": ["KEY_LOAD_ENTRY_TYPE"],
+	"dependencies": [],
+	"definition": "typedef enum _KEY_LOAD_ENTRY_TYPE\n{\n\tKeyLoadTrustClassKey = 1,\n\tKeyLoadEvent,\n\tKeyLoadToken\n} KEY_LOAD_ENTRY_TYPE;"
+  },
+  {
+	"identifiers": ["KEY_LOAD_ENTRY", "PKEY_LOAD_ENTRY"],
+	"dependencies": ["KEY_LOAD_ENTRY_TYPE"],
+	"definition": "typedef struct _KEY_LOAD_ENTRY\n{\n\tKEY_LOAD_ENTRY_TYPE          EntryType;\n\tunion\n\t{\n\t\tHANDLE          Handle;\n\t\tULONG_PTR          Value;\n\t};\n} KEY_LOAD_ENTRY, *PKEY_LOAD_ENTRY;"
   }
 ]

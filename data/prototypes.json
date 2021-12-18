@@ -16287,5 +16287,164 @@
         "optional": false
       }
     ]
+  },
+  "NtAllocateUserPhysicalPagesEx": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": [
+		{
+			"name": "ProcessHandle",
+			"type": "HANDLE",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "NumberOfPages",
+			"type": "PULONG_PTR",
+			"in": true,
+			"out": true,
+			"optional": false
+		},
+		{
+			"name": "UserPfnArray",
+			"type": "PULONG_PTR",
+			"in": false,
+			"out": true,
+			"optional": false
+		},
+		{
+			"name": "ExtendedParameters",
+			"type": "PMEM_EXTENDED_PARAMETER",
+			"in": true,
+			"out": true,
+			"optional": true
+		},
+		{
+			"name": "ExtendedParameterCount",
+			"type": "ULONG",
+			"in": true,
+			"out": false,
+			"optional": false
+		}
+	  ]
+  },
+  "NtLoadKey3": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": [
+		{
+			"name": "TargetKey",
+			"type": "POBJECT_ATTRIBUTES",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "SourceFile",
+			"type": "POBJECT_ATTRIBUTES",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "Flags",
+			"type": "ULONG",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "LoadEntries",
+			"type": "PKEY_LOAD_ENTRY",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "LoadEntryCount",
+			"type": "ULONG",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "DesiredAccess",
+			"type": "ACCESS_MASK",
+			"in": true,
+			"out": false,
+			"optional": true
+		},
+		{
+			"name": "RootHandle",
+			"type": "PHANDLE",
+			"in": false,
+			"out": true,
+			"optional": true
+		},
+		{
+			"name": "Reserved",
+			"type": "PVOID",
+			"in": false,
+			"out": false,
+			"optional": false
+		}
+	  ]
+  },
+  "NtPssCaptureVaSpaceBulk": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": [
+		{
+			"name": "ProcessHandle",
+			"type": "HANDLE",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "BaseAddress",
+			"type": "PVOID",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "MemoryInfo",
+			"type": "PBULK_MEMORY_INFORMATION",
+			"in": false,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "Length",
+			"type": "SIZE_T",
+			"in": true,
+			"out": false,
+			"optional": false
+		},
+		{
+			"name": "ReturnLength",
+			"type": "PSIZE_T",
+			"in": false,
+			"out": true,
+			"optional": false
+		}
+	  ]
+  },
+  "NtDirectGraphicsCall": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": []
+  },
+  "NtAcquireCrossVmMutant": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": []
+  },
+  "NtCreateCrossVmMutant": {
+	  "type": "NTSTATUS",
+	  "lib": "ntdll.dll",
+	  "params": []
   }
 }
